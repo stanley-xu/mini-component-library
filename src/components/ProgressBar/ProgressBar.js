@@ -7,31 +7,33 @@ import VisuallyHidden from '../VisuallyHidden';
 
 const Base = styled.div`
   background-color: ${COLORS.transparentGray15};
+  height: var(--bar-height);
+  border-radius: var(--bar-radius);
 `
 
-const Small = styled(Base)`
-  height: 8px;
-  border-radius: 4px;
-`
+const VARIANT_PROPERTIES = {
+  small: {
+    '--bar-height': '8px',
+    '--bar-radius': '4px',
+  },
+  medium: {
+    '--bar-height': '12px',
+    '--bar-radius': '4px',
+  },
+  large: {
+    '--bar-height': '24px',
+    '--bar-radius': '8px',
+  },
+}
 
-const Medium = styled(Base)`
-  height: 12px;
-  border-radius: 4px;
-`
-
-const Large = styled(Base)`
-  height: 24px;
-  border-radius: 8px;
-`
+const RADIUS = {
+  rounded: 'var(--bar-radius)',
+  none: '0',
+}
 
 const ProgressBar = ({ value, size }) => {
-  let Wrapper;
-  switch (size) {
-    case 'small': Wrapper = Small; break;
-    case 'medium': Wrapper = Medium; break;
-    case 'large': Wrapper = Large; break;
-    default: Wrapper = Medium
-  }
+  const variantProps = VARIANT_PROPERTIES[size]
+  if (!variantProps) throw new Error(`Unknown size variant: ${size}`)
 
   const accessibleContent = (
     <VisuallyHidden>
@@ -39,20 +41,22 @@ const ProgressBar = ({ value, size }) => {
     </VisuallyHidden>
   );
 
+  const radius = (value) => value === 100 ? RADIUS.rounded : RADIUS.none
+
+  console.log({ test: radius(value) })
+
   const MeterWrapper = styled.div`
     width: ${value}%;
     height: 100%;
     background-color: ${COLORS.primary};
-    border-radius: inherit;
+    border-radius: ${RADIUS.rounded} ${radius(value)} ${radius(value)} ${RADIUS.rounded};
   `
-
   const markup = (
-    <Wrapper>
+    <Base style={variantProps}>
       <MeterWrapper>
         {accessibleContent}
-
       </MeterWrapper>
-    </Wrapper>
+    </Base>
   )
 
   return markup
