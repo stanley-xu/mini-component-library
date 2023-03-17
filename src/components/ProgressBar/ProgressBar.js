@@ -9,6 +9,7 @@ const Base = styled.div`
   background-color: ${COLORS.transparentGray15};
   height: var(--bar-height);
   border-radius: var(--bar-radius);
+  padding: var(--bar-padding);
 `
 
 const VARIANT_PROPERTIES = {
@@ -23,6 +24,7 @@ const VARIANT_PROPERTIES = {
   large: {
     '--bar-height': '24px',
     '--bar-radius': '8px',
+    '--bar-padding': '4px',
   },
 }
 
