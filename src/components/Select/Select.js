@@ -27,15 +27,19 @@ const SelectWrapper = ({ chars, ...rest }) => {
     padding: 12px 48px 12px 16px;
     background-color: ${COLORS.transparentGray15};
 
+    // Found that the ch unit represents characters; that plus spacing
     width: ${chars && `calc(${chars}ch + 64px)`};
   `
   return <Component {...rest} />
 }
 
-const IconWrapper = styled.div`
+const IconWrapper = styled.span`
   position: absolute;
   top: 16px;
   right: 16px;
+  // My hack to make this icon clickable
+  // You're in fact clicking <Select />, it's presented above the icon
+  z-index: -1;
 
   & svg {
     width: 100%;
@@ -46,8 +50,6 @@ const IconWrapper = styled.div`
 
 const Select = ({ label, value, onChange, children }) => {
   const displayedValue = getDisplayedValue(value, children);
-
-  console.log({ displayedValue, label })
 
   return (
     <Wrapper>
