@@ -12,6 +12,30 @@ const Base = styled.div`
   padding: var(--bar-padding);
 `
 
+const MeterWrapper = styled.div`
+  // Clipping meter content that extends past the border of the progress bar
+  overflow-x: hidden;
+  height: 100%;
+  border-radius: var(--bar-radius);
+`
+
+const RADIUS = {
+  rounded: 'var(--bar-radius)',
+  none: '0',
+}
+
+const radius = (value) => value === 100 ? RADIUS.rounded : RADIUS.none
+
+const Meter = ({ value }) => {
+  const Component = styled.div`
+    width: ${value}%;
+    height: 100%;
+    background-color: ${COLORS.primary};
+    border-radius: ${RADIUS.rounded} ${radius(value)} ${radius(value)} ${RADIUS.rounded};
+  `
+  return <Component value={value} />
+}
+
 const VARIANT_PROPERTIES = {
   small: {
     '--bar-height': '8px',
@@ -28,10 +52,6 @@ const VARIANT_PROPERTIES = {
   },
 }
 
-const RADIUS = {
-  rounded: 'var(--bar-radius)',
-  none: '0',
-}
 
 const ProgressBar = ({ value, size }) => {
   const variantProps = VARIANT_PROPERTIES[size]
@@ -43,25 +63,15 @@ const ProgressBar = ({ value, size }) => {
     </VisuallyHidden>
   );
 
-  const radius = (value) => value === 100 ? RADIUS.rounded : RADIUS.none
-
-  console.log({ test: radius(value) })
-
-  const MeterWrapper = styled.div`
-    width: ${value}%;
-    height: 100%;
-    background-color: ${COLORS.primary};
-    border-radius: ${RADIUS.rounded} ${radius(value)} ${radius(value)} ${RADIUS.rounded};
-  `
-  const markup = (
+  return (
     <Base style={variantProps}>
       <MeterWrapper>
-        {accessibleContent}
+        <Meter value={value}>
+          {accessibleContent}
+        </Meter>
       </MeterWrapper>
     </Base>
   )
-
-  return markup
 };
 
 export default ProgressBar;
