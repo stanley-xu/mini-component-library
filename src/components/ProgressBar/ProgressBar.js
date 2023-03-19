@@ -8,7 +8,7 @@ import VisuallyHidden from '../VisuallyHidden';
 const Base = styled.div`
   background-color: ${COLORS.transparentGray15};
   height: var(--bar-height);
-  border-radius: var(--bar-radius);
+  border-radius: var(--bar-outer-radius, var(--bar-radius));
   padding: var(--bar-padding);
 `
 
@@ -56,6 +56,8 @@ const VARIANT_PROPERTIES = {
   large: {
     '--bar-height': '24px',
     '--bar-radius': '8px',
+    // Adding normal radius + padding (inner radius + offset) for concentric circle
+    '--bar-outer-radius': `${8 + 4}px`,
     '--bar-padding': '4px',
   },
 }
