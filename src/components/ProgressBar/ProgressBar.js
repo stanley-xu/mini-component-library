@@ -33,7 +33,15 @@ const Meter = ({ value }) => {
     background-color: ${COLORS.primary};
     border-radius: ${RADIUS.rounded} ${radius(value)} ${radius(value)} ${RADIUS.rounded};
   `
-  return <Component value={value} />
+  return (
+    <Component
+      value={value}
+      role='progressbar'
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={100}
+    />
+  )
 }
 
 const VARIANT_PROPERTIES = {
