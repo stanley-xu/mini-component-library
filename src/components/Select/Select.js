@@ -5,17 +5,41 @@ import { COLORS } from '../../constants';
 import Icon from '../Icon';
 import { getDisplayedValue } from './Select.helpers';
 
+const Wrapper = styled.div`
+  position: relative;
+  // Stacking context
+  isolation: isolate;
+
+  width: fit-content;
+  font-size: 16px;
+  font-weight: 400;
+  color: ${COLORS.gray700};
+`
+
 const CustomSelect = styled.div`
   position: relative;
   top: 0;
   left: 0;
 
-  // Stacking context
-  isolation: isolate;
 
   border-radius: 8px;
   padding: 12px 52px 12px 16px;
   background-color: ${COLORS.transparentGray15};
+
+  // Wrapper receives hover states and not CustomSelect for some reason
+  ${Wrapper}:hover & {
+    color: ${COLORS.black};
+  }
+  
+  // Using focus-within to detect focus on NativeSelect,
+  //  then use that event to style CustomSelect
+  // By default, the wrapper does not receive focus state for some reason
+  // Alternative: use sibling combinator (NativeSelect:focus + CustomSelect),
+  //  but requires NativeSelect tag to sit above CustomSelect; will need depth change
+  ${Wrapper}:focus-within & {
+    outline: 1px dotted ${COLORS.black};
+    outline: 5px auto -webkit-focus-ring-color;
+  }
 `
 
 const NativeSelect = styled.select`
@@ -48,28 +72,7 @@ const IconWrapper = ({ size, ...rest }) => {
   )
 }
 
-const Wrapper = styled.div`
-  position: relative;
 
-  width: fit-content;
-  font-size: 16px;
-  font-weight: 400;
-  color: ${COLORS.gray700};
-
-  &:hover {
-    color: ${COLORS.black};
-  }
-
-  // Using focus-within to detect focus on NativeSelect,
-  //  then use that event to style CustomSelect
-  // By default, the wrapper does not receive focus state for some reason
-  // Alternative: use sibling combinator (NativeSelect:focus + CustomSelect),
-  //  but requires NativeSelect tag to sit above CustomSelect; will need depth change
-  &:focus-within ${CustomSelect} {
-    outline: 1px dotted ${COLORS.black};
-    outline: 5px auto -webkit-focus-ring-color;
-  }
-`
 
 const Select = ({ label, value, onChange, children }) => {
   const displayedValue = getDisplayedValue(value, children);
@@ -78,8 +81,8 @@ const Select = ({ label, value, onChange, children }) => {
     <Wrapper>
       <CustomSelect>
         {displayedValue}
+        <IconWrapper size={24} />
       </CustomSelect>
-      <IconWrapper size={24} />
       <NativeSelect value={value} onChange={onChange}>
         {children}
       </NativeSelect>
