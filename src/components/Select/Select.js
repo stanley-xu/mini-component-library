@@ -5,46 +5,69 @@ import { COLORS } from '../../constants';
 import Icon from '../Icon';
 import { getDisplayedValue } from './Select.helpers';
 
-const Wrapper = styled.div`
-  width: fit-content;
+const CustomSelect = styled.div`
   position: relative;
+  top: 0;
+  left: 0;
 
-  &:hover {
-    & svg, & select {
-      color: black;
-    }
-  }
+  // Stacking context
+  isolation: isolate;
+
+  border-radius: 8px;
+  padding: 12px 52px 12px 16px;
+  background-color: ${COLORS.transparentGray15};
 `
 
-const SelectWrapper = ({ chars, ...rest }) => {
-  const Component = styled.select`
-    appearance: none;
-    font-family: Roboto, sans-serif;
-    font-size: 16px;
-    color: ${COLORS.gray700};
-    
-    border-radius: 8px;
-    padding: 12px 48px 12px 16px;
-    background-color: ${COLORS.transparentGray15};
+const NativeSelect = styled.select`
+  position: absolute;
+  top: 0;
+  left: 0;
 
-    // Found that the ch unit represents characters; that plus spacing
-    width: ${chars && `calc(${chars}ch + 64px)`};
+  // Hide front-facing native select element so our custom one is shown
+  opacity: 0;
+  // Span the full dimensions of the Wrapper container
+  width: 100%;
+  height: 100%;
+`
+
+const IconWrapper = ({ size, ...rest }) => {
+  const Component = styled.span`
+    width: ${size}px;
+    height: ${size}px;
+
+    position: absolute;
+    top: 0;
+    right: 12px;
+    bottom: 0;
+    margin: auto 0;
   `
-  return <Component {...rest} />
+  return (
+    <Component {...rest}>
+      <Icon id="chevron-down" size={size} strokeWidth={2} />
+    </Component>
+  )
 }
 
-const IconWrapper = styled.span`
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  // My hack to make this icon clickable
-  // You're in fact clicking <Select />, it's presented above the icon
-  z-index: -1;
+const Wrapper = styled.div`
+  position: relative;
 
-  & svg {
-    width: 100%;
-    height: 100%;
-    color: ${COLORS.gray700};
+  width: fit-content;
+  font-size: 16px;
+  font-weight: 400;
+  color: ${COLORS.gray700};
+
+  &:hover {
+    color: ${COLORS.black};
+  }
+
+  // Using focus-within to detect focus on NativeSelect,
+  //  then use that event to style CustomSelect
+  // By default, the wrapper does not receive focus state for some reason
+  // Alternative: use sibling combinator (NativeSelect:focus + CustomSelect),
+  //  but requires NativeSelect tag to sit above CustomSelect; will need depth change
+  &:focus-within ${CustomSelect} {
+    outline: 1px dotted ${COLORS.black};
+    outline: 5px auto -webkit-focus-ring-color;
   }
 `
 
@@ -53,15 +76,15 @@ const Select = ({ label, value, onChange, children }) => {
 
   return (
     <Wrapper>
-      <SelectWrapper value={value} onChange={onChange} chars={displayedValue.length}>
+      <CustomSelect>
+        {displayedValue}
+      </CustomSelect>
+      <IconWrapper size={24} />
+      <NativeSelect value={value} onChange={onChange}>
         {children}
-      </SelectWrapper>
-      <IconWrapper>
-        <Icon id='chevron-down' size={16} strokeWidth={2} />
-      </IconWrapper>
+      </NativeSelect>
     </Wrapper>
-
-  );
+  )
 };
 
 export default Select;
